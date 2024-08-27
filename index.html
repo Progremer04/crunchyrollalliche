@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crunchyroll Account</title>
+    <link rel="shortcut icon" href="/crunchyroll.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Add custom styles for circular menu items */
+        .circle-menu-item {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(227, 233, 230, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            transition: transform 0.5s ease-in-out, background-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .circle-menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Center align text inside each item */
+        .circle-menu-item>div {
+            text-align: center;
+        }
+
+        .inner-circle,
+        .outer-circle {
+            position: relative;
+            line-height: 1.5;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(235, 16, 16, 0.5);
+        }
+
+        /* Slower Rotation Animations */
+        .inner-circle {
+            animation: rotate 0s infinite linear reverse;
+        }
+
+        .outer-circle {
+            animation: spin 120s infinite linear;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        /* Background Animation */
+        @keyframes backgroundChange {
+            0% {
+                background-image: url('/bg/1.jpg');
+            }
+
+            25% {
+                background-image: url('/bg/1329800.jpeg');
+            }
+
+            50% {
+                background-image: url('/bg/153823.jpg');
+            }
+
+            75% {
+                background-image: url('/bg/2.jpg');
+            }
+
+            100% {
+                background-image: url('/bg/3.jpg');
+            }
+        }
+
+        body {
+            animation: backgroundChange 20s infinite;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Responsive adjustments */
+        .outer-circle {
+            width: 80vw;
+            height: 80vw;
+            max-width: 800px;
+            max-height: 800px;
+        }
+
+        .inner-circle {
+            width: 40vw;
+            height: 40vw;
+            max-width: 400px;
+            max-height: 400px;
+            background-color: #552b2b38;
+        }
+
+        /* Center the text in the inner circle */
+        .inner-circle .text-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100%;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* Media queries for better responsiveness */
+        @media (max-width: 768px) {
+            .outer-circle {
+                width: 70vw;
+                height: 70vw;
+            }
+
+            .inner-circle {
+                width: 35vw;
+                height: 35vw;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .outer-circle {
+                width: 60vw;
+                height: 60vw;
+            }
+
+            .inner-circle {
+                width: 30vw;
+                height: 30vw;
+            }
+
+            .circle-menu-item {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black flex justify-center items-center min-h-screen relative">
+    <!-- Circular Menus -->
+    <div class="outer-circle relative bg-black bg-opacity-50 rounded-full mx-auto mt-32 mb-10 flex items-center justify-center">
+        <div class="inner-circle absolute rounded-full flex items-center justify-center">
+            <div class="text-container text-white">
+                There are 100 Crunchyroll premium codes. Click on any number to copy it automatically and go to the Crunchyroll login page to enjoy.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('149Crunchyrollpremium.txt')
+                .then(response => response.text())
+                .then(data => {
+                    const lines = data.split('\n').map(line => line.trim()).filter(line => line);
+                    const outerContainer = document.querySelector('.outer-circle');
+                    const innerContainer = document.querySelector('.inner-circle');
+
+                    // Handle the first 50 items in the outer circle
+                    const radiusOuter = 390 // Reduced radius for better spacing
+                    const totalItemsOuter = Math.min(50, lines.length);
+
+                    for (let i = 0; i < totalItemsOuter; i++) {
+                        const item = document.createElement('div');
+                        item.className = 'circle-menu-item';
+                        item.innerHTML = `<div>${i + 1}</div>`;
+                        item.setAttribute('data-content', lines[i]);
+
+                        const angle = (i / totalItemsOuter) * Math.PI * 2;
+                        const x = Math.cos(angle) * radiusOuter;
+                        const y = Math.sin(angle) * radiusOuter;
+                        item.style.transform = `translate(${x}px, ${y}px)`;
+
+                        item.addEventListener('click', () => {
+                            copyToClipboard(lines[i]);
+                            alert(`Copied Account ${i + 1} : ${lines[i]} \n Enjoy`);
+                        });
+
+                        outerContainer.appendChild(item);
+                    }
+
+                    // Handle the remaining items (up to 50) in the inner circle
+                    const radiusInner = 300; // Reduced radius for better spacing
+                    const totalItemsInner = Math.min(50, lines.length - 50);
+
+                    for (let i = 0; i < totalItemsInner; i++) {
+                        const item = document.createElement('div');
+                        item.className = 'circle-menu-item';
+                        item.innerHTML = `<div>${i + 51}</div>`;
+                        item.setAttribute('data-content', lines[i + 50]);
+
+                        const angle = (i / totalItemsInner) * Math.PI * 2;
+                        const x = Math.cos(angle) * radiusInner;
+                        const y = Math.sin(angle) * radiusInner;
+                        item.style.transform = `translate(${x}px, ${y}px)`;
+
+                        item.addEventListener('click', () => {
+                            copyToClipboard(lines[i + 50]);
+                            alert(`Copied Account ${i + 51} : ${lines[i + 50]} \n Enjoy`);
+                        });
+
+                        innerContainer.appendChild(item);
+                    }
+                })
+                .catch(error => console.error('Error loading the text file:', error));
+        });
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+
+</html>
